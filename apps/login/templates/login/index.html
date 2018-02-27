@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login & Reg | Home</title>
+    <title>Login/Registration</title>
 </head>
 <body>
+
+    <h2>Welcome!</h2>
     
     <h2>Registration</h2>
 
@@ -21,11 +23,11 @@
     <form action="/registration" method="post">
         {% csrf_token %}
         <input type="hidden" name="action" value="registration">
-        First Name: <input type="text" name="fname">
-        Last Name: <input type="text" name="lname">
-        Email: <input type="text" name="email">
+        Name: <input type="text" name="name">
+        Username: <input type="text" name="username">
         Password: <input type="text" name="password">
         Confirm: <input type="text" name="confirm">
+        Date Hired: <input type="date" name="date">
         <input type="submit" value="Register">
     </form>
 
@@ -33,7 +35,7 @@
     <form action="/login" method="post">
         {% csrf_token %}
         <input type="hidden" name="action" value="login">
-        Email: <input type="text" name="login_email">
+        Username: <input type="text" name="username">
         Password: <input type="text" name="login_password">
         <input type="submit" value="Login">
     </form>

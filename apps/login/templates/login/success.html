@@ -4,13 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login & Reg | Success</title>
+    <title>My Wish List</title>
 </head>
 <body>
     
-    <h2>Success! Welcome, {{ user.fname }} {{ user.lname }}!</h2>
+    <a href="/logout">Logout</a>
+    <a href="/wish_items/create">Add Item</a>
 
-    <p>{{ message }}</p>
+    <h2>Hello, {{ user.name }} !</h2>
+
+    <h4>Your Wish List</h4>
+    <table>
+        <thead>
+            <tr>
+                <td>Item</td>
+                <td>Added by</td>
+                <td>Date Added</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in all_items %}
+                <tr>
+                    <td><a href="/wish_items/{{i.id}}">{{i.name}}</a></td>
+                    <td>{{i.owner.name}}</td>
+                    <td>{{i.created_at}}</td>
+                    {% if i.owner.id == user.id %}
+                    <td><a href="/delete">Delete</a></td>
+                    {% else %}
+                    <td><a href="/remove">Remove from my Wishlist</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Other Users' Wish List</h4>
+    <table>
+        <thead>
+            <tr>
+                <td>Item</td>
+                <td>Added by</td>
+                <td>Date Added</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in all_items %}
+            <tr>
+                <td><a href="/wish_items/{{i.id}}">{{i.name}}</a></td>
+                <td>{{i.owner.name}}</td>
+                <td>{{i.created_at}}</td>
+                <td><a href="/add_list/{{i.id}}">Add to my Wishlist</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 </body>
 </html>
