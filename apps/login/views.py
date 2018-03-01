@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import User, Item
+from .models import User, Destination
 from django.contrib import messages
 import bcrypt
+from datetime import datetime
 
 # Create your views here.
 
@@ -23,7 +24,7 @@ def registration(request):
         if 'new_user' in errors:
             request.session['id'] = errors['new_user'].id
             request.session['action'] = request.POST['action']
-            return redirect('/dashboard')
+            return redirect('/travels')
         else:
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags = tag)
@@ -42,7 +43,7 @@ def login(request):
             request.session['id'] = errors['user'].id
             request.session['name'] = errors['user'].name
             request.session['action'] = request.POST['action']
-            return redirect('/dashboard')
+            return redirect('/travels')
         else:
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags = tag)
@@ -60,88 +61,77 @@ def logout(request):
 
     return redirect('/')
 
-def dashboard(request):
+def travels(request):
     print "in success route"
 
     if 'id' in request.session:
-        all_items = Item.objects.all()
+        this_user = User.objects.get(id = request.session['id'])
+        user_trips = this_user.plan.all()
+        other_trips = Destination.objects.all().exclude(creator_id = request.session['id']).exclude(plans = request.session['id'])
+
+        # myDate = datetime.now()
+        # formatedDate = myDate.strftime("%m-%d-%Y ")
+        # start_date = []
+
         if request.session['action'] == "registration":
             context = {
                 "user": User.objects.get(id = request.session['id']),
                 "message": "Successfully registered!",
-                "all_items": all_items 
+                "user_trips": user_trips,
+                "other_trips": other_trips,
+                # "date": formatedDate,
             }
         if request.session['action'] == "login":
             context = {
                 "user": User.objects.get(id = request.session['id']),
                 "message": "Successfully logged in!",
-                "all_items": all_items 
+                "user_trips": user_trips,
+                "other_trips": other_trips,
+                # "date": formatedDate,
             }
-        print "all_items is: ", all_items
         return render(request, 'login/success.html', context)
     return redirect('/')
 
-def add_item(request):
-    print "in add_item route"
+def add_destination(request):
+    print "in add_destination route"
 
     return render(request, 'login/add.html')
 
-def process_item(request):
-    print "in process_item route"
+def process_destination(request):
+    print "in process_destination route"
 
     if request.method == "POST":
-        errors = User.objects.item_adder(request.POST)
-        if 'new_item' in errors:
-            return redirect('/dashboard')
+        errors = User.objects.destination_adder(request.POST)
+        if 'new_location' in errors:
+            return redirect('/travels')
         else:
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags = tag)
 
-            return redirect('/wish_items/create')
+            return redirect('/travels/add')
 
-def remove(request):
-    print "in remove route"
+    return redirect('/travels')
 
+def join_destination(request, id):
+    print "in join_destination route"
 
-    return redirect('/dashboard')
+    this_location = Destination.objects.get(id = id)
+    this_user = User.objects.get(id = request.session['id'])
+    this_user.plan.add(this_location)
 
-def delete(request):
-    print "in delete route"
+    return redirect('/travels')
 
-    # item = Item.objects.get(id = id)
-    # item.delete()
+def view_destination(request, id):
+    print "in view_destination route"
 
-    return redirect('/dashboard')
+    this_location = Destination.objects.get(id = id)
+    users = this_location.plans.all()
 
-def view_item(request, id):
-    print "in show_item route"
-
-    this_item = Item.objects.get(id = id)
-    users = User.objects.filter(items = this_item)
-
-    print "users is: ", users
+    print "****** this_location is: ", this_location
 
     context = {
-        "item": this_item,
+        "location": this_location,
         "users": users
-    }
+    } 
 
     return render(request, 'login/view.html', context)
-
-def add_list(request, id):
-    print "in add_list route"
-
-    item = Item.objects.get(id = id)
-    owner = User.objects.get(id = request.session['id'])
-
-    Item.objects.create(name = item.name, owner = owner)
-
-    return redirect('/dashboard')
-
-# def remove_list(request, id):
-#     print "in remove_list route"
-
-#     item = Item.objects.get(id = id)
-#     item.delete()
-    
-#     return redirect('/dashboard')

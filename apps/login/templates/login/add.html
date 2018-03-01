@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <a href="/dashboard">Home</a>
+    <a href="/travels">Home</a>
     <a href="/logout">Logout</a>
 
     {% if messages %}
@@ -19,10 +19,13 @@
     </ul>
     {% endif %}
 
-    <h3>Create a New Wish List Item</h3>
-    <form action="/process_item", method="post">
+    <h3>Add a Trip</h3>
+    <form action="/process_destination", method="post">
         {% csrf_token %}
-        Item/Product: <input type="text" name="item">
+        Destination: <input type="text" name="location">
+        Description: <input type="text" name="content">
+        Travel Date From: <input type="date" name="start_date">
+        Travel Date To: <input type="date" name="end_date">
         <input type="submit" value="Add">
         <input type="hidden" name="adder" value="{{request.session.id}}">
     </form>

@@ -8,11 +8,16 @@
 </head>
 <body>
     
-    <a href="/dashboard">Home</a>
+    <a href="/travels">Home</a>
     <a href="/logout">Logout</a>
 
-    <h3>{{ item.name }}</h3>
-    <p>Users who added this product/item under their wish list:</p>
+    <h3>{{ location.location }}</h3>
+    <p>Planned by: {{ location.creator.name }} </p>
+    <p>Description: {{ location.content }}</p>
+    <p>Travel Date From: {{ location.start_date }} </p>
+    <p>Travel Date To: {{ location.end_date }} </p>
+    
+    <p>Others users joining the trip:</p>
     {% for i in users %}
         <p>{{i.name}}</p>
     {% endfor %}

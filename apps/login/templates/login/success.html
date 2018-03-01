@@ -4,59 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>My Wish List</title>
+    <title>Travel Dashbaord</title>
 </head>
 <body>
     
     <a href="/logout">Logout</a>
-    <a href="/wish_items/create">Add Item</a>
+    <a href="/travels/add">Add Travel Plan</a>
 
     <h2>Hello, {{ user.name }} !</h2>
 
-    <h4>Your Wish List</h4>
+    <h4>Your Trip Schedules</h4>
     <table>
         <thead>
             <tr>
-                <td>Item</td>
-                <td>Added by</td>
-                <td>Date Added</td>
-                <td>Action</td>
+                <td>Destination</td>
+                <td>Travel Start Date</td>
+                <td>Travel End Date</td>
+                <td>Plan</td>
             </tr>
         </thead>
         <tbody>
-            {% for i in all_items %}
+            {% for i in user_trips %}
                 <tr>
-                    <td><a href="/wish_items/{{i.id}}">{{i.name}}</a></td>
-                    <td>{{i.owner.name}}</td>
-                    <td>{{i.created_at}}</td>
-                    {% if i.owner.id == user.id %}
-                    <td><a href="/delete">Delete</a></td>
-                    {% else %}
-                    <td><a href="/remove">Remove from my Wishlist</a></td>
-                    {% endif %}
+                    <td><a href="/travels/destination/{{i.id}}">{{i.location}}</a></td>
+                    <td>{{i.start_date}}</td>
+                    <td>{{i.end_date}}</td>
+                    <td>{{i.content}}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <h4>Other Users' Wish List</h4>
+    <h4>Other Users' Travel Plans</h4>
     <table>
         <thead>
             <tr>
-                <td>Item</td>
-                <td>Added by</td>
-                <td>Date Added</td>
-                <td>Action</td>
+                <td>Name</td>
+                <td>Destination</td>
+                <td>Travel Start Date</td>
+                <td>Travel End Date</td>
+                <td>Do You Want to Join?</td>
             </tr>
         </thead>
         <tbody>
-            {% for i in all_items %}
+            {% for i in other_trips %}
+            {% if i.id != user.id %}
             <tr>
-                <td><a href="/wish_items/{{i.id}}">{{i.name}}</a></td>
-                <td>{{i.owner.name}}</td>
-                <td>{{i.created_at}}</td>
-                <td><a href="/add_list/{{i.id}}">Add to my Wishlist</a></td>
+                <td><a>{{i.creator.name}}</a></td>
+                <td><a href="/travels/destination/{{i.id}}">{{i.location}}</a></td>
+                <td>{{i.start_date}}</td>
+                <td>{{ i.end_date }}</td>
+                <td><a href="/add_destination/{{i.id}}">Join</a></td>
             </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>
