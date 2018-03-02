@@ -4,62 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Travel Dashbaord</title>
+    <title>Quotes</title>
 </head>
 <body>
     
     <a href="/logout">Logout</a>
-    <a href="/travels/add">Add Travel Plan</a>
 
-    <h2>Hello, {{ user.name }} !</h2>
+    <h2>Welcome, {{ user.name }} !</h2>
 
-    <h4>Your Trip Schedules</h4>
-    <table>
-        <thead>
-            <tr>
-                <td>Destination</td>
-                <td>Travel Start Date</td>
-                <td>Travel End Date</td>
-                <td>Plan</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in user_trips %}
-                <tr>
-                    <td><a href="/travels/destination/{{i.id}}">{{i.location}}</a></td>
-                    <td>{{i.start_date}}</td>
-                    <td>{{i.end_date}}</td>
-                    <td>{{i.content}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h4>Quotable Quotes</h4>
 
-    <h4>Other Users' Travel Plans</h4>
-    <table>
-        <thead>
-            <tr>
-                <td>Name</td>
-                <td>Destination</td>
-                <td>Travel Start Date</td>
-                <td>Travel End Date</td>
-                <td>Do You Want to Join?</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in other_trips %}
-            {% if i.id != user.id %}
-            <tr>
-                <td><a>{{i.creator.name}}</a></td>
-                <td><a href="/travels/destination/{{i.id}}">{{i.location}}</a></td>
-                <td>{{i.start_date}}</td>
-                <td>{{ i.end_date }}</td>
-                <td><a href="/add_destination/{{i.id}}">Join</a></td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+    {% for i in other_list %}
+        <p>{{ i.content }}</p>
+        <p>Posted by: <a href="/users/{{i.adder.id}}">{{ i.adder.name }}</a></p>
+        <form action="/add_quote/{{i.id}}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Add to My List">
+        </form>
+    {% endfor %}
+
+    <h4>Your Favorites</h4>
+
+    {% for i in fav_list %}
+        <p>{{ i.content }}</p>
+        <p>Posted by: <a href="/users/{{i.adder.id}}">{{ i.adder.name }}</a></p>
+        <form action="/remove_quote/{{i.id}}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Remove from My List">
+        </form>
+    {% endfor %}
+
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li style="color:red" {% if message.tags %} class="{{ message.tags }}" {% endif %} > {{ message }} </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h3>Contribute a Quote:</h3>
+
+    <form action="/process_quote", method="post">
+        {% csrf_token %}
+        Quoted By: <input type="text" name="quoted_by">
+        Message: <textarea name="content" cols="30" rows="10"></textarea>
+        <input type="submit" value="Submit">
+        <input type="hidden" name="adder" value="{{request.session.id}}">
+    </form>
 
 </body>
 </html>

@@ -4,25 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ item.name }}</title>
+    <title>Quotes</title>
 </head>
 <body>
     
-    <a href="/travels">Home</a>
+    <a href="/quotes">Dashboard</a>
     <a href="/logout">Logout</a>
 
-    <h3>{{ location.location }}</h3>
-    <p>Planned by: {{ location.creator.name }} </p>
-    <p>Description: {{ location.content }}</p>
-    <p>Travel Date From: {{ location.start_date }} </p>
-    <p>Travel Date To: {{ location.end_date }} </p>
-    
-    <p>Others users joining the trip:</p>
-    {% for i in users %}
-        <p>{{i.name}}</p>
+    <h3>Posts by {{user.name}}</h3>
+    <h3>Count: {{count}}</h3>
+
+    {% for i in user_quotes %}
+    <p style="color:red">{{ i.quoted_by }}:</p>
+    <p>{{ i.content }}</p>
     {% endfor %}
-
-
 
 </body>
 </html>

@@ -24,9 +24,11 @@
         {% csrf_token %}
         <input type="hidden" name="action" value="registration">
         Name: <input type="text" name="name">
-        Username: <input type="text" name="username">
-        Password: <input type="text" name="password">
-        Confirm: <input type="text" name="confirm">
+        Alias: <input type="text" name="alias">
+        Email: <input type="text" name="email">
+        Password: <input type="password" name="password">
+        Confirm: <input type="password" name="confirm">
+        Date of Birth: <input type="date" name="dob">
         <input type="submit" value="Register">
     </form>
 
@@ -34,8 +36,8 @@
     <form action="/login" method="post">
         {% csrf_token %}
         <input type="hidden" name="action" value="login">
-        Username: <input type="text" name="username">
-        Password: <input type="text" name="login_password">
+        Email: <input type="text" name="email">
+        Password: <input type="password" name="login_password">
         <input type="submit" value="Login">
     </form>
 

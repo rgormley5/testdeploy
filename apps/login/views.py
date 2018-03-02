@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import User, Destination
+from .models import User, Quote
 from django.contrib import messages
 import bcrypt
 from datetime import datetime
@@ -24,7 +24,7 @@ def registration(request):
         if 'new_user' in errors:
             request.session['id'] = errors['new_user'].id
             request.session['action'] = request.POST['action']
-            return redirect('/travels')
+            return redirect('/quotes')
         else:
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags = tag)
@@ -43,7 +43,7 @@ def login(request):
             request.session['id'] = errors['user'].id
             request.session['name'] = errors['user'].name
             request.session['action'] = request.POST['action']
-            return redirect('/travels')
+            return redirect('/quotes')
         else:
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags = tag)
@@ -61,77 +61,79 @@ def logout(request):
 
     return redirect('/')
 
-def travels(request):
-    print "in success route"
+def quotes(request):
+    print "in quotes route"
 
     if 'id' in request.session:
         this_user = User.objects.get(id = request.session['id'])
-        user_trips = this_user.plan.all()
-        other_trips = Destination.objects.all().exclude(creator_id = request.session['id']).exclude(plans = request.session['id'])
-
-        # myDate = datetime.now()
-        # formatedDate = myDate.strftime("%m-%d-%Y ")
-        # start_date = []
+        fav_list = this_user.list.all()
+        # other_list = Quote.objects.all().exclude(adder_id = request.session['id']).exclude(lists = request.session['id'])
+        other_list = Quote.objects.all().exclude(lists = request.session['id'])
 
         if request.session['action'] == "registration":
             context = {
                 "user": User.objects.get(id = request.session['id']),
                 "message": "Successfully registered!",
-                "user_trips": user_trips,
-                "other_trips": other_trips,
-                # "date": formatedDate,
+                "fav_list": fav_list,
+                "other_list": other_list,
             }
         if request.session['action'] == "login":
             context = {
                 "user": User.objects.get(id = request.session['id']),
                 "message": "Successfully logged in!",
-                "user_trips": user_trips,
-                "other_trips": other_trips,
-                # "date": formatedDate,
+                "fav_list": fav_list,
+                "other_list": other_list,
             }
         return render(request, 'login/success.html', context)
     return redirect('/')
 
-def add_destination(request):
-    print "in add_destination route"
-
-    return render(request, 'login/add.html')
-
-def process_destination(request):
-    print "in process_destination route"
+def process_quote(request):
+    print "in process_quote route"
 
     if request.method == "POST":
-        errors = User.objects.destination_adder(request.POST)
-        if 'new_location' in errors:
-            return redirect('/travels')
+        errors = User.objects.quote_adder(request.POST)
+        if 'new_quote' in errors:
+            return redirect('/quotes')
         else:
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags = tag)
 
-            return redirect('/travels/add')
+            return redirect('/quotes')
 
-    return redirect('/travels')
+    return redirect('/quotes')
 
-def join_destination(request, id):
-    print "in join_destination route"
+def add_quote(request, id):
+    print "in add_qoute route"
 
-    this_location = Destination.objects.get(id = id)
+    this_quote = Quote.objects.get(id = id)
     this_user = User.objects.get(id = request.session['id'])
-    this_user.plan.add(this_location)
+    this_user.list.add(this_quote)
 
-    return redirect('/travels')
+    return redirect('/quotes')
 
-def view_destination(request, id):
-    print "in view_destination route"
+def remove_quote(request, id):
+    print "in remove_quote route"
 
-    this_location = Destination.objects.get(id = id)
-    users = this_location.plans.all()
+    this_quote = Quote.objects.get(id = id)
+    this_user = User.objects.get(id = request.session['id'])
+    remove_quote = this_user.list.remove(this_quote)
+    this_quote.save()
 
-    print "****** this_location is: ", this_location
+    return redirect('/quotes')
+
+def show_user(request, id):
+    print "in show_user route"
+
+    this_user = User.objects.get(id = request.session['id'])
+
+    user_quotes = this_user.quotes.all()
+    count = len(user_quotes)
+    print "****** user_quotes is: ", user_quotes.all()
 
     context = {
-        "location": this_location,
-        "users": users
-    } 
+        "user": this_user,
+        "count": count,
+        "user_quotes": user_quotes
+    }
 
     return render(request, 'login/view.html', context)
